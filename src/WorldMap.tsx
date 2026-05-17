@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import './App.css'
+import './WorldMap.css'
+import defaultSvgSource from './world.svg?raw'
 
-const MAP_SVG_URL = '/world.svg'
-
-type WorldMapProps = {
+export type WorldMapProps = {
   backgroundColor?: string
   countryColor?: string
   defaultRegionName?: string
   defaultCountryCode?: string
+  svgUrl?: string
+  className?: string
 }
 
 const isHexColor = (value: string) => /^#([0-9a-fA-F]{3}){1,2}$/.test(value)
@@ -29,14 +30,13 @@ const adjustHexColor = (hex: string, amount: number) => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`
 }
 
-const escapeCssId = (value: string) =>
-  value.replace(/[^a-zA-Z0-9_-]/g, '\\$&')
-
-function App({
+export function WorldMap({
   backgroundColor,
   countryColor = '#2563eb',
-  defaultRegionName = 'India',
-  defaultCountryCode = 'BD',
+  defaultRegionName,
+  defaultCountryCode,
+  svgUrl,
+  className,
 }: WorldMapProps) {
   const [svgMarkup, setSvgMarkup] = useState('')
   const [hoverTooltip, setHoverTooltip] = useState({
@@ -74,9 +74,19 @@ function App({
   useEffect(() => {
     let isActive = true
 
-    fetch(MAP_SVG_URL)
-      .then((response) => response.text())
-      .then((rawSvg) => {
+    const loadSvg = async () => {
+      try {
+        let rawSvg: string
+        if (svgUrl) {
+          const response = await fetch(svgUrl)
+          if (!response.ok) {
+            throw new Error(`Failed to fetch SVG: ${response.status}`)
+          }
+          rawSvg = await response.text()
+        } else {
+          rawSvg = defaultSvgSource
+        }
+
         if (!isActive) {
           return
         }
@@ -122,17 +132,19 @@ function App({
 
         const serializer = new XMLSerializer()
         setSvgMarkup(serializer.serializeToString(svg))
-      })
-      .catch(() => {
+      } catch {
         if (isActive) {
           setSvgMarkup('')
         }
-      })
+      }
+    }
+
+    loadSvg()
 
     return () => {
       isActive = false
     }
-  }, [defaultCountryCode])
+  }, [defaultCountryCode, svgUrl])
 
   const findCountryElement = (target: EventTarget | null) => {
     if (!target || !(target instanceof Element)) {
@@ -248,7 +260,11 @@ function App({
       return
     }
 
-    const normalizedRegion = defaultRegionName.trim().toLowerCase()
+    const normalizedRegion = defaultRegionName?.trim().toLowerCase()
+    if (!normalizedRegion) {
+      return
+    }
+
     const regionTarget = Array.from(
       container.querySelectorAll('[data-name]')
     ).find(
@@ -273,7 +289,6 @@ function App({
       setZoom(nextZoom)
       setPan({ x: nextPanX, y: nextPanY })
     }
-
   }, [svgMarkup, defaultRegionName])
 
   const styleVars = {
@@ -284,9 +299,17 @@ function App({
     '--country-stroke': colors.stroke,
   } as React.CSSProperties
 
+  const containerClasses = ['map-container', className]
+    .filter(Boolean)
+    .join(' ')
+
+  const finalClassName = isPanning
+    ? `${containerClasses} is-panning`.trim()
+    : containerClasses
+
   return (
     <div
-      className={isPanning ? 'map-container is-panning' : 'map-container'}
+      className={finalClassName}
       style={styleVars}
       ref={mapRef}
       onPointerMove={handlePointerMove}
@@ -335,4 +358,4 @@ function App({
   )
 }
 
-export default App
+export default WorldMap

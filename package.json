@@ -1,17 +1,51 @@
 {
   "name": "world-map-svg",
-  "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "Interactive SVG world map React component",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "typescript",
+    "svg",
+    "world-map",
+    "map",
+    "interactive-map"
+  ],
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+  "main": "./dist/world-map-svg.cjs.js",
+  "module": "./dist/world-map-svg.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/world-map-svg.es.js",
+      "require": "./dist/world-map-svg.cjs.js"
+    },
+    "./style.css": "./dist/style.css"
   },
-  "dependencies": {
-    "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourname/world-map-svg.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourname/world-map-svg/issues"
+  },
+  "homepage": "https://github.com/yourname/world-map-svg#readme",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "vite --config playground/vite.config.ts",
+    "build": "tsc -b && vite build && tsc -p tsconfig.build.json",
+    "lint": "eslint .",
+    "prepublishOnly": "npm run build && npm run lint"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
