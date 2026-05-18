@@ -28,12 +28,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourname/world-map-svg.git"
+    "url": "git+https://github.com/zaforIq/world-map-svg.git"
   },
   "bugs": {
-    "url": "https://github.com/yourname/world-map-svg/issues"
+    "url": "https://github.com/zaforIq/world-map-svg/issues"
   },
-  "homepage": "https://github.com/yourname/world-map-svg#readme",
+  "homepage": "https://github.com/zaforIq/world-map-svg#readme",
   "sideEffects": [
     "**/*.css"
   ],
