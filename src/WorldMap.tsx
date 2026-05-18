@@ -156,12 +156,33 @@ export function WorldMap({
               return path
             }
 
+            const createDot = (x: number, y: number, cls: string) => {
+              const circle = doc.createElementNS('http://www.w3.org/2000/svg', 'circle')
+              circle.setAttribute('cx', String(x))
+              circle.setAttribute('cy', String(y))
+              circle.setAttribute('r', '3')
+              circle.setAttribute('class', cls)
+              return circle
+            }
+
+            const addedDots = new Set<string>()
+
             for (const code of connectedCountries) {
               const center = countryCenters[code as keyof typeof countryCenters]
               if (center && code !== connectionBase) {
                 const d = generateCurve(center, baseCenter)
                 svg.appendChild(createCurve(d))
+
+                if (!addedDots.has(code)) {
+                  svg.appendChild(createDot(center.x, center.y, 'connection-dot connection-dot-start'))
+                  addedDots.add(code)
+                }
               }
+            }
+
+            if (!addedDots.has(connectionBase)) {
+              svg.appendChild(createDot(baseCenter.x, baseCenter.y, 'connection-dot connection-dot-end'))
+              addedDots.add(connectionBase)
             }
           }
         }
