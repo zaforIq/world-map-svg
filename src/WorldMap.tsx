@@ -231,7 +231,7 @@ export function WorldMap({
     if (!target || !(target instanceof Element)) {
       return null
     }
-    return target.closest('.connection-dot') as HTMLElement | null
+    return target.closest('.connection-dot')
   }
 
   const getRelativePoint = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -270,8 +270,8 @@ export function WorldMap({
 
     // Check connection dots first
     const dotElement = findConnectionDot(event.target)
-    const dotCode = dotElement?.dataset.countryCode
-    const dotName = dotElement?.dataset.countryName
+    const dotCode = dotElement?.getAttribute('data-country-code')
+    const dotName = dotElement?.getAttribute('data-country-name')
     if (dotCode && dotName) {
       if (onConnectionDotHover) {
         const { x, y } = getRelativePoint(event)
@@ -314,8 +314,8 @@ export function WorldMap({
 
     // Check connection dots first
     const dotElement = findConnectionDot(event.target)
-    const dotCode = dotElement?.dataset.countryCode
-    const dotName = dotElement?.dataset.countryName
+    const dotCode = dotElement?.getAttribute('data-country-code')
+    const dotName = dotElement?.getAttribute('data-country-name')
     if (dotCode && dotName) {
       if (onConnectionDotClick) {
         const { x, y } = getRelativePoint(event)
