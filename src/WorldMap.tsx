@@ -263,7 +263,12 @@ export function WorldMap({
       const nextX = panStateRef.current.originX + deltaX
       const nextY = panStateRef.current.originY + deltaY
       setPan({ x: nextX, y: nextY })
-      panStateRef.current.moved = true
+
+      const dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+      if (dist > 5) {
+        panStateRef.current.moved = true
+      }
+
       setHoverTooltip((current) => ({ ...current, visible: false }))
       return
     }
