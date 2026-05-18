@@ -5,7 +5,7 @@ function App() {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <WorldMap
-        countryColor="#2563eb"
+        countryColor="#093C5D"
       />
     </div>
   )

@@ -32,7 +32,7 @@
 }
 
 .map-svg .country {
-  fill: var(--country-fill, #2563eb);
+  fill: var(--country-fill, #093C5D);
   stroke: var(--country-stroke, #1e40af);
   stroke-width: 0.6;
   cursor: pointer;

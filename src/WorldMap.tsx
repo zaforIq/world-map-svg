@@ -30,7 +30,7 @@ const adjustHexColor = (hex: string, amount: number) => {
 
 export function WorldMap({
   backgroundColor,
-  countryColor = '#2563eb',
+  countryColor = '#093C5D',
   svgUrl,
   className,
 }: WorldMapProps) {

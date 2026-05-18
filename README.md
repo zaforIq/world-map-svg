@@ -18,7 +18,7 @@ function App() {
   return (
     <div style={{ width: '100%', height: '500px' }}>
       <WorldMap
-        countryColor="#2563eb"
+        countryColor="#093C5D"
       />
     </div>
   )
@@ -30,7 +30,7 @@ function App() {
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `backgroundColor` | `string` | `transparent` | Map background color |
-| `countryColor` | `string` | `#2563eb` | Base fill color for countries |
+| `countryColor` | `string` | `#093C5D` | Base fill color for countries |
 | `svgUrl` | `string` | bundled SVG | Custom SVG URL to override the default world map |
 | `className` | `string` | - | Additional CSS class for the container |
 
