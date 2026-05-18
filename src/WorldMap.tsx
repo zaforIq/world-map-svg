@@ -7,6 +7,7 @@ export type WorldMapProps = {
   countryColor?: string
   svgUrl?: string
   className?: string
+  showConnections?: boolean
 }
 
 const isHexColor = (value: string) => /^#([0-9a-fA-F]{3}){1,2}$/.test(value)
@@ -33,6 +34,7 @@ export function WorldMap({
   countryColor = '#093C5D',
   svgUrl,
   className,
+  showConnections = true,
 }: WorldMapProps) {
   const [svgMarkup, setSvgMarkup] = useState('')
   const [hoverTooltip, setHoverTooltip] = useState({
@@ -119,6 +121,28 @@ export function WorldMap({
           path.setAttribute('data-name', title)
         })
 
+        if (showConnections) {
+          const hasUs = svg.querySelector('#US')
+          const hasIn = svg.querySelector('#IN')
+          const hasBd = svg.querySelector('#BD')
+
+          if (hasUs && hasIn && hasBd) {
+            const createLine = (x1: number, y1: number, x2: number, y2: number) => {
+              const line = doc.createElementNS('http://www.w3.org/2000/svg', 'line')
+              line.setAttribute('x1', String(x1))
+              line.setAttribute('y1', String(y1))
+              line.setAttribute('x2', String(x2))
+              line.setAttribute('y2', String(y2))
+              line.setAttribute('class', 'connection-line')
+              return line
+            }
+
+            // Exact bounding-box centers for the bundled world.svg
+            svg.appendChild(createLine(143.6, 291.0, 728.4, 394.8))
+            svg.appendChild(createLine(707.1, 400.5, 728.4, 394.8))
+          }
+        }
+
         const serializer = new XMLSerializer()
         setSvgMarkup(serializer.serializeToString(svg))
       } catch {
@@ -133,7 +157,7 @@ export function WorldMap({
     return () => {
       isActive = false
     }
-  }, [svgUrl])
+  }, [svgUrl, showConnections])
 
   const findCountryElement = (target: EventTarget | null) => {
     if (!target || !(target instanceof Element)) {
