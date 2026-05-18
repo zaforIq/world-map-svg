@@ -5,8 +5,6 @@ import defaultSvgSource from './world.svg?raw'
 export type WorldMapProps = {
   backgroundColor?: string
   countryColor?: string
-  defaultRegionName?: string
-  defaultCountryCode?: string
   svgUrl?: string
   className?: string
 }
@@ -33,8 +31,6 @@ const adjustHexColor = (hex: string, amount: number) => {
 export function WorldMap({
   backgroundColor,
   countryColor = '#2563eb',
-  defaultRegionName,
-  defaultCountryCode,
   svgUrl,
   className,
 }: WorldMapProps) {
@@ -114,7 +110,6 @@ export function WorldMap({
         svg.setAttribute('class', 'map-svg')
 
         const countryPaths = svg.querySelectorAll('path[title]')
-        const defaultCode = defaultCountryCode?.toUpperCase()
         countryPaths.forEach((path) => {
           const title = path.getAttribute('title') || ''
           if (!title) {
@@ -122,12 +117,6 @@ export function WorldMap({
           }
           path.classList.add('country')
           path.setAttribute('data-name', title)
-
-          if (defaultCode && path.getAttribute('id') === defaultCode) {
-            path.classList.add('is-default')
-            path.setAttribute('fill', '#16a34a')
-            path.setAttribute('stroke', '#16a34a')
-          }
         })
 
         const serializer = new XMLSerializer()
@@ -144,7 +133,7 @@ export function WorldMap({
     return () => {
       isActive = false
     }
-  }, [defaultCountryCode, svgUrl])
+  }, [svgUrl])
 
   const findCountryElement = (target: EventTarget | null) => {
     if (!target || !(target instanceof Element)) {
@@ -251,45 +240,7 @@ export function WorldMap({
     setIsPanning(false)
   }
 
-  useEffect(() => {
-    if (!svgMarkup) {
-      return
-    }
-    const container = mapRef.current
-    if (!container) {
-      return
-    }
 
-    const normalizedRegion = defaultRegionName?.trim().toLowerCase()
-    if (!normalizedRegion) {
-      return
-    }
-
-    const regionTarget = Array.from(
-      container.querySelectorAll('[data-name]')
-    ).find(
-      (element) =>
-        element.getAttribute('data-name')?.trim().toLowerCase() ===
-        normalizedRegion
-    ) as HTMLElement | undefined
-
-    if (regionTarget) {
-      const containerRect = container.getBoundingClientRect()
-      const targetRect = regionTarget.getBoundingClientRect()
-      const targetX =
-        targetRect.left - containerRect.left + targetRect.width / 2
-      const targetY =
-        targetRect.top - containerRect.top + targetRect.height / 2
-      const nextZoom = 1.6
-      const centerX = containerRect.width / 2
-      const centerY = containerRect.height / 2
-      const nextPanX = centerX / nextZoom - targetX
-      const nextPanY = centerY / nextZoom - targetY
-
-      setZoom(nextZoom)
-      setPan({ x: nextPanX, y: nextPanY })
-    }
-  }, [svgMarkup, defaultRegionName])
 
   const styleVars = {
     '--map-background': backgroundColor || 'transparent',

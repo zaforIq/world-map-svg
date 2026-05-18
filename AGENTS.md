@@ -7,7 +7,7 @@ React component library that renders an interactive SVG world map. Built with Re
 ## Build & Dev
 
 - `npm run dev` — start playground dev server (Vite app in `playground/`)
-- `npm run build` — type-check then build library (`tsc -b && vite build`)
+- `npm run build` — type-check (`tsc -b`), build library (`vite build`), then emit declarations (`tsc -p tsconfig.build.json`)
 - `npm run lint` — ESLint; covers `**/*.{ts,tsx}`
 - `npm run prepublishOnly` — runs `build` + `lint` before publishing
 
@@ -30,10 +30,16 @@ No test runner is configured. Do not run `npm test`.
 Vite library mode emits:
 - `dist/world-map-svg.es.js` (ESM)
 - `dist/world-map-svg.cjs.js` (CJS)
-- `dist/index.d.ts` (types, rolled up)
+- `dist/index.d.ts` (types, emitted by `tsconfig.build.json`)
 - `dist/style.css` (extracted component styles)
 
 `package.json` `exports` field points to these. `files` is `["dist"]`.
+
+React and ReactDOM are peer dependencies and externalized in the Rollup build.
+
+## Entrypoint
+
+Library exports are defined in `src/index.ts`.
 
 ## Runtime Asset
 
@@ -41,4 +47,4 @@ Vite library mode emits:
 
 ## Playground
 
-`playground/` is a separate Vite app for local development. It imports the component directly from `../src` via relative paths. No separate `npm install` is needed — it uses the root `node_modules`.
+`playground/` is a separate Vite app for local development. It imports the component directly from `../src` via relative paths. No separate `npm install` is needed — it uses the root `node_modules`. `playground/tsconfig.json` is independent of the root project references.

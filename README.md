@@ -19,8 +19,6 @@ function App() {
     <div style={{ width: '100%', height: '500px' }}>
       <WorldMap
         countryColor="#2563eb"
-        defaultRegionName="India"
-        defaultCountryCode="BD"
       />
     </div>
   )
@@ -33,8 +31,6 @@ function App() {
 |------|------|---------|-------------|
 | `backgroundColor` | `string` | `transparent` | Map background color |
 | `countryColor` | `string` | `#2563eb` | Base fill color for countries |
-| `defaultRegionName` | `string` | - | Region name to focus on load |
-| `defaultCountryCode` | `string` | - | ISO country code to highlight on load |
 | `svgUrl` | `string` | bundled SVG | Custom SVG URL to override the default world map |
 | `className` | `string` | - | Additional CSS class for the container |
 
