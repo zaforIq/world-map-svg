@@ -57,7 +57,6 @@
 .map-svg .connection-line {
   stroke: #ef4444;
   stroke-width: 2;
-  stroke-dasharray: 5 4;
   fill: none;
   pointer-events: none;
   opacity: 0.85;
