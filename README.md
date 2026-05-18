@@ -32,7 +32,9 @@ function App() {
 | `backgroundColor` | `string` | `transparent` | Map background color |
 | `countryColor` | `string` | `#093C5D` | Base fill color for countries |
 | `svgUrl` | `string` | bundled SVG | Custom SVG URL to override the default world map |
-| `showConnections` | `boolean` | `true` | Show dashed connection lines from USA and India to Bangladesh |
+| `showConnections` | `boolean` | `true` | Show carved connection lines |
+| `connectionBase` | `string` | `BD` | ISO country code of the hub/base country |
+| `connectedCountries` | `string[]` | `['US', 'IN']` | ISO country codes to connect to the base |
 | `className` | `string` | - | Additional CSS class for the container |
 
 ## Development

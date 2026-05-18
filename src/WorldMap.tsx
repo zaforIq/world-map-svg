@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import './WorldMap.css'
 import defaultSvgSource from './world.svg?raw'
+import countryCenters from './country-centers.json'
 
 export type WorldMapProps = {
   backgroundColor?: string
   countryColor?: string
   svgUrl?: string
   className?: string
+  showConnections?: boolean
+  connectionBase?: string
+  connectedCountries?: string[]
 }
 
 const isHexColor = (value: string) => /^#([0-9a-fA-F]{3}){1,2}$/.test(value)
@@ -28,11 +32,32 @@ const adjustHexColor = (hex: string, amount: number) => {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`
 }
 
+function generateCurve(
+  from: { x: number; y: number },
+  to: { x: number; y: number }
+) {
+  const dx = to.x - from.x
+  const dy = to.y - from.y
+  const dist = Math.sqrt(dx * dx + dy * dy)
+  const midY = (from.y + to.y) / 2
+  const offset = Math.max(Math.min(dist * 0.35, 220), 15)
+
+  const cp1x = from.x + dx * 0.25
+  const cp1y = midY - offset
+  const cp2x = from.x + dx * 0.75
+  const cp2y = midY - offset
+
+  return `M ${from.x} ${from.y} C ${cp1x},${cp1y} ${cp2x},${cp2y} ${to.x} ${to.y}`
+}
+
 export function WorldMap({
   backgroundColor,
   countryColor = '#093C5D',
   svgUrl,
   className,
+  showConnections = true,
+  connectionBase = 'BD',
+  connectedCountries = ['US', 'IN'],
 }: WorldMapProps) {
   const [svgMarkup, setSvgMarkup] = useState('')
   const [hoverTooltip, setHoverTooltip] = useState({
@@ -119,23 +144,26 @@ export function WorldMap({
           path.setAttribute('data-name', title)
         })
 
-        // Connection lines: USA → Bangladesh, India → Bangladesh
-        const hasUs = svg.querySelector('#US')
-        const hasIn = svg.querySelector('#IN')
-        const hasBd = svg.querySelector('#BD')
+        // Dynamic connection lines
+        if (showConnections) {
+          const baseCenter = countryCenters[connectionBase as keyof typeof countryCenters]
+          if (baseCenter) {
+            const createCurve = (d: string) => {
+              const path = doc.createElementNS('http://www.w3.org/2000/svg', 'path')
+              path.setAttribute('d', d)
+              path.setAttribute('class', 'connection-line')
+              path.setAttribute('fill', 'none')
+              return path
+            }
 
-        if (hasUs && hasIn && hasBd) {
-          const createCurve = (d: string) => {
-            const path = doc.createElementNS('http://www.w3.org/2000/svg', 'path')
-            path.setAttribute('d', d)
-            path.setAttribute('class', 'connection-line')
-            path.setAttribute('fill', 'none')
-            return path
+            for (const code of connectedCountries) {
+              const center = countryCenters[code as keyof typeof countryCenters]
+              if (center && code !== connectionBase) {
+                const d = generateCurve(center, baseCenter)
+                svg.appendChild(createCurve(d))
+              }
+            }
           }
-
-          // Carved cubic-bezier curves (solid, not dashed)
-          svg.appendChild(createCurve('M 143.6 291.0 C 250,80 600,80 728.4 394.8'))
-          svg.appendChild(createCurve('M 707.1 400.5 C 705,360 720,360 728.4 394.8'))
         }
 
         const serializer = new XMLSerializer()
@@ -152,7 +180,7 @@ export function WorldMap({
     return () => {
       isActive = false
     }
-  }, [svgUrl])
+  }, [svgUrl, showConnections, connectionBase, connectedCountries])
 
   const findCountryElement = (target: EventTarget | null) => {
     if (!target || !(target instanceof Element)) {
