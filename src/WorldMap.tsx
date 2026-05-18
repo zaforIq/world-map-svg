@@ -13,8 +13,8 @@ export type WorldMapProps = {
   connectedCountries?: string[]
   onCountryHover?: (countryCode: string, countryName: string, x: number, y: number) => void
   onCountryClick?: (countryCode: string, countryName: string, x: number, y: number) => void
-  onConnectionDotHover?: (countryCode: string, x: number, y: number) => void
-  onConnectionDotClick?: (countryCode: string, x: number, y: number) => void
+  onConnectionDotHover?: (countryCode: string, countryName: string, x: number, y: number) => void
+  onConnectionDotClick?: (countryCode: string, countryName: string, x: number, y: number) => void
 }
 
 const isHexColor = (value: string) => /^#([0-9a-fA-F]{3}){1,2}$/.test(value)
@@ -164,13 +164,19 @@ export function WorldMap({
               return path
             }
 
-            const createDot = (x: number, y: number, cls: string, code: string) => {
+            const getCountryName = (code: string) => {
+              const path = svg.querySelector(`#${code}`)
+              return path?.getAttribute('title') || code
+            }
+
+            const createDot = (x: number, y: number, cls: string, code: string, name: string) => {
               const circle = doc.createElementNS('http://www.w3.org/2000/svg', 'circle')
               circle.setAttribute('cx', String(x))
               circle.setAttribute('cy', String(y))
               circle.setAttribute('r', '3')
               circle.setAttribute('class', cls)
               circle.setAttribute('data-country-code', code)
+              circle.setAttribute('data-country-name', name)
               return circle
             }
 
@@ -183,14 +189,16 @@ export function WorldMap({
                 svg.appendChild(createCurve(d))
 
                 if (!addedDots.has(code)) {
-                  svg.appendChild(createDot(center.x, center.y, 'connection-dot connection-dot-start', code))
+                  const name = getCountryName(code)
+                  svg.appendChild(createDot(center.x, center.y, 'connection-dot connection-dot-start', code, name))
                   addedDots.add(code)
                 }
               }
             }
 
             if (!addedDots.has(connectionBase)) {
-              svg.appendChild(createDot(baseCenter.x, baseCenter.y, 'connection-dot connection-dot-end', connectionBase))
+              const name = getCountryName(connectionBase)
+              svg.appendChild(createDot(baseCenter.x, baseCenter.y, 'connection-dot connection-dot-end', connectionBase, name))
               addedDots.add(connectionBase)
             }
           }
@@ -263,10 +271,11 @@ export function WorldMap({
     // Check connection dots first
     const dotElement = findConnectionDot(event.target)
     const dotCode = dotElement?.dataset.countryCode
-    if (dotCode) {
+    const dotName = dotElement?.dataset.countryName
+    if (dotCode && dotName) {
       if (onConnectionDotHover) {
         const { x, y } = getRelativePoint(event)
-        onConnectionDotHover(dotCode, x, y)
+        onConnectionDotHover(dotCode, dotName, x, y)
       }
       setHoverTooltip((current) => ({ ...current, visible: false }))
       return
@@ -306,10 +315,11 @@ export function WorldMap({
     // Check connection dots first
     const dotElement = findConnectionDot(event.target)
     const dotCode = dotElement?.dataset.countryCode
-    if (dotCode) {
+    const dotName = dotElement?.dataset.countryName
+    if (dotCode && dotName) {
       if (onConnectionDotClick) {
         const { x, y } = getRelativePoint(event)
-        onConnectionDotClick(dotCode, x, y)
+        onConnectionDotClick(dotCode, dotName, x, y)
       }
       return
     }

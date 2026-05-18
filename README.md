@@ -37,8 +37,8 @@ function App() {
 | `connectedCountries` | `string[]` | `['US', 'IN']` | ISO country codes to connect to the base |
 | `onCountryHover` | `(code, name, x, y) => void` | - | Fires when hovering a country path. Suppresses built-in tooltip. |
 | `onCountryClick` | `(code, name, x, y) => void` | - | Fires when clicking a country path. Suppresses built-in click tooltip. |
-| `onConnectionDotHover` | `(code, x, y) => void` | - | Fires when hovering a connection dot. |
-| `onConnectionDotClick` | `(code, x, y) => void` | - | Fires when clicking a connection dot. |
+| `onConnectionDotHover` | `(code, name, x, y) => void` | - | Fires when hovering a connection dot. |
+| `onConnectionDotClick` | `(code, name, x, y) => void` | - | Fires when clicking a connection dot. |
 | `className` | `string` | - | Additional CSS class for the container |
 
 ## Development
