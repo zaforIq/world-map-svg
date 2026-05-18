@@ -364,6 +364,16 @@ export function WorldMap({
     if (event.button !== 0) {
       return
     }
+
+    // Keep country/dot clicks reliable by avoiding pan mode on interactive targets.
+    const clickedDot = findConnectionDot(event.target)
+    const clickedCountry = findCountryElement(event.target)
+    if (clickedDot || clickedCountry) {
+      panStateRef.current.isPanning = false
+      panStateRef.current.moved = false
+      return
+    }
+
     event.currentTarget.setPointerCapture(event.pointerId)
     panStateRef.current.isPanning = true
     panStateRef.current.startX = event.clientX
