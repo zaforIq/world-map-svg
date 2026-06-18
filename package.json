@@ -39,7 +39,8 @@
   ],
   "scripts": {
     "dev": "vite --config playground/vite.config.ts",
-    "build": "tsc -b && vite build && tsc -p tsconfig.build.json",
+    "verify": "node scripts/verify.mjs",
+    "build": "npm run verify && tsc -b && vite build && tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "prepublishOnly": "npm run build && npm run lint"
   },

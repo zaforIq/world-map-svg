@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import './WorldMap.css'
 import defaultSvgSource from './world.svg?raw'
 import countryCenters from './country-centers.json'
+import { buildCountryLookup, resolveCountryCode } from './countryLookup'
 
 export type WorldMapProps = {
   backgroundColor?: string
@@ -9,7 +10,9 @@ export type WorldMapProps = {
   svgUrl?: string
   className?: string
   showConnections?: boolean
+  /** ISO 3166-1 alpha-2 code or country name (case-insensitive, normalized). */
   connectionBase?: string
+  /** ISO codes and/or country names for connected endpoints. */
   connectedCountries?: string[]
   onCountryHover?: (countryCode: string, countryName: string, x: number, y: number) => void
   onCountryClick?: (countryCode: string, countryName: string, x: number, y: number) => void
@@ -154,8 +157,13 @@ export function WorldMap({
 
         // Dynamic connection lines
         if (showConnections) {
-          const baseCenter = countryCenters[connectionBase as keyof typeof countryCenters]
-          if (baseCenter) {
+          const countryLookup = buildCountryLookup(svg)
+          const baseCode = resolveCountryCode(connectionBase, countryLookup)
+          const baseCenter = baseCode
+            ? countryCenters[baseCode as keyof typeof countryCenters]
+            : undefined
+
+          if (baseCode && baseCenter) {
             const createCurve = (d: string) => {
               const path = doc.createElementNS('http://www.w3.org/2000/svg', 'path')
               path.setAttribute('d', d)
@@ -182,24 +190,31 @@ export function WorldMap({
 
             const addedDots = new Set<string>()
 
-            for (const code of connectedCountries) {
-              const center = countryCenters[code as keyof typeof countryCenters]
-              if (center && code !== connectionBase) {
-                const d = generateCurve(center, baseCenter)
-                svg.appendChild(createCurve(d))
+            for (const identifier of connectedCountries) {
+              const code = resolveCountryCode(identifier, countryLookup)
+              if (!code || code === baseCode) {
+                continue
+              }
 
-                if (!addedDots.has(code)) {
-                  const name = getCountryName(code)
-                  svg.appendChild(createDot(center.x, center.y, 'connection-dot connection-dot-start', code, name))
-                  addedDots.add(code)
-                }
+              const center = countryCenters[code as keyof typeof countryCenters]
+              if (!center) {
+                continue
+              }
+
+              const d = generateCurve(center, baseCenter)
+              svg.appendChild(createCurve(d))
+
+              if (!addedDots.has(code)) {
+                const name = getCountryName(code)
+                svg.appendChild(createDot(center.x, center.y, 'connection-dot connection-dot-start', code, name))
+                addedDots.add(code)
               }
             }
 
-            if (!addedDots.has(connectionBase)) {
-              const name = getCountryName(connectionBase)
-              svg.appendChild(createDot(baseCenter.x, baseCenter.y, 'connection-dot connection-dot-end', connectionBase, name))
-              addedDots.add(connectionBase)
+            if (!addedDots.has(baseCode)) {
+              const name = getCountryName(baseCode)
+              svg.appendChild(createDot(baseCenter.x, baseCenter.y, 'connection-dot connection-dot-end', baseCode, name))
+              addedDots.add(baseCode)
             }
           }
         }

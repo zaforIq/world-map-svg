@@ -6,6 +6,9 @@ function App() {
     <div style={{ width: '100vw', height: '100vh' }}>
       <WorldMap
         countryColor="#093C5D"
+        showConnections
+        connectionBase="Bangladesh"
+        connectedCountries={['United States', 'India', 'GB']}
       />
     </div>
   )
