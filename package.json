@@ -1,6 +1,6 @@
 {
   "name": "world-map-svg",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "description": "Interactive SVG world map React component",
   "license": "MIT",
   "keywords": [
