@@ -15,15 +15,10 @@ const { aliases: COUNTRY_ALIASES, disambiguated: COUNTRY_DISAMBIGUATED_NAMES } =
 
 function normalizeCountryName(value) {
   return value
-    .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[''`]/g, '')
-    .replace(/[.,()]/g, ' ')
-    .replace(/[^a-z0-9\s-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+    .replace(/[^a-z0-9]/g, '')
 }
 
 function parseSvgCountries(svgText) {

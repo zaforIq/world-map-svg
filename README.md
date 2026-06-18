@@ -133,7 +133,7 @@ Use `normalizeCountryName` from the package if you need the same normalization i
 ```tsx
 import { normalizeCountryName } from 'world-map-svg'
 
-normalizeCountryName("  Côte d'Ivoire ") // "cote d ivoire"
+normalizeCountryName("  Côte d'Ivoire ") // "cotedivoire"
 ```
 
 ## Props

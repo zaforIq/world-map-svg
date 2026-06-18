@@ -10,15 +10,10 @@ export type MapCountry = {
 
 export function normalizeCountryName(value: string): string {
   return value
-    .trim()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
-    .replace(/[''`]/g, '')
-    .replace(/[.,()]/g, ' ')
-    .replace(/[^a-z0-9\s-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+    .replace(/[^a-z0-9]/g, '')
 }
 
 export function listMapCountries(svg: Element): MapCountry[] {
